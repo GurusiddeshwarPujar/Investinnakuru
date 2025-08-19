@@ -1,8 +1,38 @@
 // src/controllers/authController.js
+// src/controllers/authController.js
+const fs = require('fs');
+const path = require('path');
 const { PrismaClient } = require('../../generated/prisma'); // Adjust path based on your 'src' location
 const prisma = new PrismaClient();
 const bcrypt = require('bcryptjs'); // Used for hashing passwords
 const jwt = require('jsonwebtoken'); // Used for creating and verifying JWTs
+
+//start forgot password
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
+
+// Function to load email templates with replacements
+function loadTemplate(templateName, replacements = {}) {
+    const headerPath = path.join(__dirname, '../emailTemplates/partials/header.html');
+    const footerPath = path.join(__dirname, '../emailTemplates/partials/footer.html');
+    const bodyPath = path.join(__dirname, `../emailTemplates/${templateName}.html`);
+
+    const header = fs.readFileSync(headerPath, 'utf8');
+    const footer = fs.readFileSync(footerPath, 'utf8');
+    let body = fs.readFileSync(bodyPath, 'utf8');
+
+    // Combine header, body, and footer first
+    let fullHtml = header + body + footer;
+
+    // Replace placeholders throughout the entire HTML string
+    for (const key in replacements) {
+        fullHtml = fullHtml.replace(new RegExp(`{{${key}}}`, 'g'), replacements[key]);
+    }
+
+    return fullHtml;
+}
+
+//end
 
 // Controller function to handle admin user login
 const loginUser = async (req, res) => {
@@ -50,5 +80,123 @@ const loginUser = async (req, res) => {
   }
 };
 
-// Export the function to be used by the routes
-module.exports = { loginUser };
+
+// Function to send a password reset email using Gmail
+async function sendGmailPasswordResetEmail(email, resetLink) {
+    
+    const user = process.env.GMAIL_SMTP_USER;
+    const pass = process.env.GMAIL_SMTP_PASS;
+
+    try {
+        const transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 587, 
+            secure: false, 
+            requireTLS: true,
+            auth: {
+                user: user,
+                pass: pass,
+            },
+        });
+
+       const currentYear = new Date().getFullYear();
+        const htmlContent = loadTemplate('passwordReset', { 
+            resetLink: resetLink,
+            subject: 'Password Reset Request', 
+            headerText: 'Invest In Nakuru' ,
+             currentYear: currentYear
+        });
+
+        const mailOptions = {
+          from: user,
+          to: email,
+          subject: 'Password Reset Request', 
+          html: htmlContent,
+        };
+
+       
+        await transporter.sendMail(mailOptions);
+        console.log(`Password reset email sent to ${email}`);
+    } catch (error) {
+        console.error(`Error sending password reset email to ${email}:`, error);
+        throw new Error('Failed to send password reset email.');
+    }
+}
+
+//#region admin forgot password controller logic 
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const admin = await prisma.tbl_admin.findUnique({ where: { email } });
+    if (!admin) {
+      return res.status(404).json({ message: 'admin with that email does not exist.' });
+    }
+
+    // Generate a unique token and set its expiration
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenExpires = Date.now() + 3600000; // 1 hour expiration.
+
+    await prisma.tbl_admin.update({
+      where: { id: admin.id },
+      data: { resetToken, resetTokenExpires: new Date(resetTokenExpires) },
+    });
+
+    const resetLink = `${process.env.frontend_url}/admin/reset-password?token=${resetToken}`;
+
+    // Call the updated email sending function here.
+    await sendGmailPasswordResetEmail(email, resetLink);
+
+    res.status(200).json({ message: 'Password reset link sent to your email.' });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({ message: 'Something went wrong.' });
+  }
+};
+
+//#endregion forgot passwod.
+
+//#region reset password
+const resetPassword = async (req,res) => {
+
+  const {newPassword,token} = req.body;
+  try{
+    const admin = await prisma.tbl_admin.findFirst({
+      where:{
+        resetToken:token,
+        resetTokenExpires:
+        { 
+          gt: new Date(),
+        },
+      },
+    });
+
+    if(!admin){
+      return res.status(400).json({message:'Invalid or expired token.'});
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await prisma.tbl_admin.update({
+      where: { id: admin.id },
+      data: {
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExpires: null,
+      },
+    });
+
+    res.status(200).json({ message: 'Password has been reset successfully.' });
+  }
+  catch (error) {
+    console.error('Reset password error:', error);
+    res.status(500).json({ message: 'Something went wrong.' });
+  }
+};
+
+//#endregion
+
+
+
+module.exports = { loginUser,forgotPassword,resetPassword };
