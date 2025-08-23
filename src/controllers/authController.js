@@ -197,6 +197,114 @@ const resetPassword = async (req,res) => {
 
 //#endregion
 
+//#region Get admin profile
+
+  const getProfile =async(req,res)=>{
+    try{
+      const admin= await prisma.tbl_admin.findUnique({
+        where :{id :req.admin.id},
+        select :{
+          id:true,
+          fullname:true,
+          username:true,
+          email:true,
+          phoneNumber:true,
+          createdAt:true,
+          updatedAt:true,
+          status:true,
+        },
+      });
+
+      if(!admin){
+        return res.status(404).json({ msg: 'Admin profile not found' });
+      }
+
+      res.json(admin);
+    }
+    catch(err){
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  };
+
+//#endregion
+
+//#region  Update admin profile
+  const updateProfile = async(req,res)=>{
+    const {fullname,phoneNumber} = req.body;
+
+    const updateData={};
+    if(fullname!==undefined){
+      updateData.fullname = fullname;
+    }
+
+    if(phoneNumber!==undefined){
+      updateData.phoneNumber = phoneNumber;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+        return res.status(400).json({ msg: 'No fields provided for update.' });
+    }
+
+    try{
+      const updateAdmin=await prisma.tbl_admin.update({
+        where:{id:req.admin.id},
+        data:updateData,
+        select:{
+          id:true,
+          fullname:true,
+          username:true,
+          email:true,
+          phoneNumber:true,
+          createdAt:true,
+          updatedAt:true,
+          status:true,
+        },
+      });
+
+      res.json({ msg: 'Profile updated successfully', admin: updateAdmin });
+    }
+    catch (err) {
+      console.error(err.message);
+       res.status(500).send('Server Error during profile update');
+    }
+  };
+//#endregion
 
 
-module.exports = { loginUser,forgotPassword,resetPassword };
+//#region Change Password
+
+const changePassword = async (req,res)=>{
+  const {oldPassword,newPassword}=req.body;
+  try{
+    const admin= await prisma.tbl_admin.findUnique({
+      where :{id:req.admin.id},
+    });
+
+    if(!admin){
+      return res.status(404).json({msg:'Admin not found.'});
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword,admin.password);
+    if(!isMatch){
+      return res.status(404).json({msg:'Incorrect old passsword.'});
+    }
+
+    const salt=await bcrypt.genSalt(10);
+    const hashedPassword =  await bcrypt.hash(newPassword,salt);
+
+    await prisma.tbl_admin.update({
+      where :{id:admin.id},
+      data:{password:hashedPassword},
+    });
+
+    res.status(200).json({msg :'Password updated succcessfully'});
+  }catch(err){
+    console.error('Change password error:', err.message);
+    res.status(500).send('Server error during password change');
+  }
+};
+
+//#endregion
+
+module.exports = { loginUser,forgotPassword,resetPassword,getProfile,updateProfile,changePassword };

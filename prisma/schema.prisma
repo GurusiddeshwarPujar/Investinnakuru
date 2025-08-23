@@ -10,12 +10,24 @@ datasource db {
 
 model tbl_admin {
   id        String   @id @default(uuid())
+  fullname  String?
   username  String
   email     String   @unique
   password  String
+  phoneNumber String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   status    Int?
   resetToken              String?
   resetTokenExpires       DateTime?
+}
+
+model tbl_contact {
+  ContactId String @id @default(uuid())
+  ContactName String
+  ContactEmail String
+  ContactPhoneNumber String
+  ContactSubject String
+  ContactMessage String
+  ContactDate DateTime @default(now())
 }

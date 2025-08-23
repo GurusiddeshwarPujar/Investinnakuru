@@ -32,9 +32,13 @@ app.use(express.json());
 // Import authentication routes
 const authRoutes = require('./routes/authRoutes');
 
+const contactRoutes = require('./routes/contactRoutes');
+
 // Mount authentication routes
 // All routes defined in authRoutes.js will be prefixed with '/api/auth'
 app.use('/api/auth', authRoutes);
+
+app.use('/api/contacts', contactRoutes);
 
 // Basic route to confirm the server is running
 app.get('/', (req, res) => {
