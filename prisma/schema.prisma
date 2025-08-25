@@ -31,3 +31,10 @@ model tbl_contact {
   ContactMessage String
   ContactDate DateTime @default(now())
 }
+
+
+model tbl_cms {
+  CmsId      String @id @default(uuid())
+  CmsPageName String @unique
+  CmsText    String
+}
