@@ -36,6 +36,8 @@ const contactRoutes = require('./routes/contactRoutes');
 
 const cmsRoutes = require('./routes/cmsRoutes');
 
+const catRoutes = require('./routes/categoryRoutes');
+
 // Mount authentication routes
 // All routes defined in authRoutes.js will be prefixed with '/api/auth'
 app.use('/api/auth', authRoutes);
@@ -43,6 +45,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/contacts', contactRoutes);
 
 app.use('/api/cms',cmsRoutes);
+
+app.use('/api/cat',catRoutes);
 
 // Basic route to confirm the server is running
 app.get('/', (req, res) => {

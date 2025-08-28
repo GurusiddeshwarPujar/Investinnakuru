@@ -38,3 +38,12 @@ model tbl_cms {
   CmsPageName String @unique
   CmsText    String
 }
+
+
+model tbl_category {
+  CatId     String    @id @default(uuid())
+  CatName   String    @unique
+  CatURL    String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
