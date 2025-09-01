@@ -1,8 +1,10 @@
 // src/server.js
 
 require('dotenv').config(); // Loads environment variables from .env
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -29,6 +31,7 @@ app.use(cors({
 // Middleware to parse JSON request bodies
 app.use(express.json());
 
+app.use(express.static(path.join(__dirname, '..', 'public')));
 // Import authentication routes
 const authRoutes = require('./routes/authRoutes');
 
@@ -37,6 +40,11 @@ const contactRoutes = require('./routes/contactRoutes');
 const cmsRoutes = require('./routes/cmsRoutes');
 
 const catRoutes = require('./routes/categoryRoutes');
+const newsRoutes=require('./routes/newsRoutes');
+
+const frontendnewsRoutes = require('./routes/frontendnewsRoutes');
+
+const newslettersubscriber = require('./routes/newsletterRoutes');
 
 // Mount authentication routes
 // All routes defined in authRoutes.js will be prefixed with '/api/auth'
@@ -47,6 +55,12 @@ app.use('/api/contacts', contactRoutes);
 app.use('/api/cms',cmsRoutes);
 
 app.use('/api/cat',catRoutes);
+
+app.use('/api/admin/news',newsRoutes);
+
+app.use('/api/news',frontendnewsRoutes);
+
+app.use('/api/newslettersubscriber',newslettersubscriber);
 
 // Basic route to confirm the server is running
 app.get('/', (req, res) => {

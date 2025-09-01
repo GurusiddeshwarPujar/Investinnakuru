@@ -46,4 +46,27 @@ model tbl_category {
   CatURL    String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  news tbl_news[]
+}
+
+
+model tbl_news{
+NewsId String @id @default(uuid())
+CatId String
+NewsTitle String @unique
+NewsURL String
+NewsDescription String
+Image String
+createdAt DateTime @default(now())
+updatedAt DateTime  @updatedAt
+
+category tbl_category @relation(fields: [CatId], references: [CatId])
+}
+
+
+model tbl_newslettersubscriber{
+  NLSubID String @id @default(uuid())
+  EmailAddress String @unique
+  createdAt  DateTime @default(now())
 }

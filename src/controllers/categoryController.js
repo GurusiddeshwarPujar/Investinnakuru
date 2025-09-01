@@ -20,7 +20,7 @@ const createCategory=async (req,res)=>{
         }
         console.error('Create category error:', err.message);
         res.status(500).send('Server Error during category creation');
-    }
+    }   
 };
 
 const getallCategory =async (req,res)=>{
