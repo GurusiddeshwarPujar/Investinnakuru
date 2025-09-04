@@ -83,3 +83,11 @@ model tbl_event {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
+
+
+model tbl_banner{
+  BannerID    String   @id @default(uuid())
+  BannerImage String 
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
