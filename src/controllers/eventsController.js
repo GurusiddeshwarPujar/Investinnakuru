@@ -4,15 +4,15 @@ const prisma = new PrismaClient();
 
 
 const creatEvent = async(req,res)=>{
-    const {EventTitle,EventURL,Description,EventDate}=req.body;
+    const {EventTitle,EventURL,Description,EventDate,Location,EventEndDate}=req.body;
     try{
-        if(!EventTitle || !EventURL || !Description || !EventDate){
+        if(!EventTitle || !EventURL || !Description || !EventDate || !Location){
             return res.status(400).json({msg : 'All event fields are required.'});
         }
 
         const newEvent =await prisma.tbl_event.create({
             data:{
-                EventTitle,EventURL,Description,EventDate: new Date(EventDate),Featured: false
+                EventTitle,EventURL,Description,EventDate: new Date(EventDate),Location, EventEndDate: EventEndDate ? new Date(EventEndDate) : null,Featured: false
             },
         });
 
@@ -57,7 +57,7 @@ const getEventByID = async (req,res)=>{
 
 const updateEvent = async (req, res) => {
     const { id } = req.params;
-    const { EventTitle, EventURL, Description, EventDate } = req.body;
+    const { EventTitle, EventURL, Description, EventDate,Location,EventEndDate } = req.body;
     
     try {
         const updatedEvent = await prisma.tbl_event.update({
@@ -67,6 +67,8 @@ const updateEvent = async (req, res) => {
                 EventURL,
                 Description,
                 EventDate: new Date(EventDate),
+                 EventEndDate : EventEndDate ? new Date(EventEndDate) : null,
+                Location,
             },
         });
 

@@ -72,12 +72,14 @@ model tbl_newslettersubscriber{
 }
 
 model tbl_event {
-  EventID     String   @id @default(uuid())
-  EventTitle  String   @unique
-  EventURL    String
-  Description String
-  Featured Boolean @default(false)
-  EventDate   DateTime
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  EventID        String   @id @default(uuid())
+  EventTitle     String   @unique
+  EventURL       String
+  Description    String
+  Featured       Boolean  @default(false)
+  EventDate      DateTime
+  EventEndDate   DateTime?
+  Location       String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
