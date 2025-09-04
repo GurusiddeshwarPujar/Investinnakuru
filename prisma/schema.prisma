@@ -70,3 +70,14 @@ model tbl_newslettersubscriber{
   EmailAddress String @unique
   createdAt  DateTime @default(now())
 }
+
+model tbl_event {
+  EventID     String   @id @default(uuid())
+  EventTitle  String   @unique
+  EventURL    String
+  Description String
+  Featured Boolean @default(false)
+  EventDate   DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
