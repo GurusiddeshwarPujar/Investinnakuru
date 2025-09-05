@@ -30,7 +30,7 @@ const upload = multer({
     fileFilter: (req, file, cb) => {
         const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
         if (!allowedTypes.includes(file.mimetype)) {
-            return cb(new Error('Invalid file type. Only JPG, PNG, GIF, and WEBP images are allowed.'));
+            return cb(new Error('Invalid file type. Only JPG, PNG, and WEBP images are allowed.'));
         }
         cb(null, true);
     }
@@ -58,7 +58,7 @@ const createNews = async (req, res) => {
         }
 
         const { CatId, NewsTitle, NewsURL, NewsDescription } = req.body;
-        const Image = req.file ? `/images/news/${req.file.filename}` : null;
+        const Image = req.file ? req.file.filename : null;
 
         try {
             if (!CatId || !NewsTitle || !NewsURL || !NewsDescription || !Image) {
@@ -128,7 +128,7 @@ const updateNews = async (req, res) => {
 
         const { id } = req.params;
         const { CatId, NewsTitle, NewsURL, NewsDescription } = req.body;
-        const newImagePath = req.file ? `/images/news/${req.file.filename}` : null;
+        const newImagePath = req.file ? req.file.filename : null;
 
         try {
             const existingNews = await prisma.tbl_news.findUnique({
