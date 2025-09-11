@@ -17,13 +17,24 @@ const allowedOrigins = [
 
 app.use(cors({
     origin: function (origin, callback) {
-        // Allow requests with no origin (like Postman)
+        ////-------- Allow requests with no origin (like Postman)
         if (!origin) return callback(null, true);
         if (allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
         }
+
+        ////----------- ❌ Block requests with no origin (Postman, curl, etc.)
+        // if (!origin) {
+        //     return callback(new Error('Requests without origin are not allowed'), false);
+        // }
+
+        // if (allowedOrigins.includes(origin)) {
+        //     callback(null, true);
+        // } else {
+        //     callback(new Error('Not allowed by CORS'), false);
+        // }
     },
     credentials: true
 }));

@@ -44,6 +44,7 @@ model tbl_category {
   CatId     String    @id @default(uuid())
   CatName   String    @unique
   CatURL    String
+  Image     String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
