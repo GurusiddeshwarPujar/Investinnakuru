@@ -57,7 +57,6 @@ const frontendnewsRoutes = require('./routes/frontendnewsRoutes');
 
 const newslettersubscriber = require('./routes/newsletterRoutes');
 
-const eventsRoutes =require('./routes/eventRoutes');
 const bannerRoutes =require('./routes/bannerRoutes');
 
 // Mount authentication routes
@@ -75,8 +74,6 @@ app.use('/api/admin/news',newsRoutes);
 app.use('/api/news',frontendnewsRoutes);
 
 app.use('/api/newslettersubscriber',newslettersubscriber);
-
-app.use('/api/events',eventsRoutes);
 
 app.use('/api/admin/banners',bannerRoutes);
 
