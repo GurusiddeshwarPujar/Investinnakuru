@@ -57,6 +57,7 @@ NewsId String @id @default(uuid())
 CatId String
 NewsTitle String @unique
 NewsURL String
+NewsShortDescription String
 NewsDescription String
 Image String
 createdAt DateTime @default(now())

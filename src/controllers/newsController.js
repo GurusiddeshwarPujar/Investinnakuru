@@ -57,11 +57,11 @@ const createNews = async (req, res) => {
             return res.status(400).json({ msg: err.message });
         }
 
-        const { CatId, NewsTitle, NewsURL, NewsDescription } = req.body;
+        const { CatId, NewsTitle, NewsURL, NewsDescription ,NewsShortDescription} = req.body;
         const Image = req.file ? req.file.filename : null;
 
         try {
-            if (!CatId || !NewsTitle || !NewsURL || !NewsDescription || !Image) {
+            if (!CatId || !NewsTitle || !NewsURL || !NewsDescription || !Image || !NewsShortDescription) {
                 // If the file was uploaded but a field is missing, delete the file
                 if (req.file) {
                     await fs.unlink(req.file.path);
@@ -70,7 +70,7 @@ const createNews = async (req, res) => {
             }
 
             const newNews = await prisma.tbl_news.create({
-                data: { CatId, NewsTitle, NewsURL, NewsDescription, Image },
+                data: { CatId, NewsTitle, NewsURL, NewsDescription, Image,NewsShortDescription },
             });
 
             res.status(201).json({ msg: 'News article created successfully.', news: newNews });
@@ -127,7 +127,7 @@ const updateNews = async (req, res) => {
         }
 
         const { id } = req.params;
-        const { CatId, NewsTitle, NewsURL, NewsDescription } = req.body;
+        const { CatId, NewsTitle, NewsURL, NewsDescription ,NewsShortDescription } = req.body;
         const newImagePath = req.file ? req.file.filename : null;
 
         try {
@@ -145,7 +145,7 @@ const updateNews = async (req, res) => {
 
             const updatedNews = await prisma.tbl_news.update({
                 where: { NewsId: id },
-                data: { CatId, NewsTitle, NewsURL, NewsDescription, Image: imageToStore },
+                data: { CatId, NewsTitle, NewsURL, NewsDescription, Image: imageToStore,NewsShortDescription },
             });
 
             // If a new image was uploaded, delete the old one
