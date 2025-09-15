@@ -59,6 +59,8 @@ const newslettersubscriber = require('./routes/newsletterRoutes');
 
 const bannerRoutes =require('./routes/bannerRoutes');
 
+const testimonalsRoutes =require('./routes/testimonialRoutes');
+
 // Mount authentication routes
 // All routes defined in authRoutes.js will be prefixed with '/api/auth'
 app.use('/api/auth', authRoutes);
@@ -76,6 +78,8 @@ app.use('/api/news',frontendnewsRoutes);
 app.use('/api/newslettersubscriber',newslettersubscriber);
 
 app.use('/api/admin/banners',bannerRoutes);
+
+app.use('/api/testimonials',testimonalsRoutes);
 
 // Basic route to confirm the server is running
 app.get('/', (req, res) => {

@@ -76,7 +76,19 @@ model tbl_newslettersubscriber{
 model tbl_banner{
   BannerID    String   @id @default(uuid())
   BannerImage String 
-  BannerTitle String?
+  BannerTitle String? 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+
+model tbl_testimonial {
+  TID        String @id @default(uuid())
+  TFullName  String
+  designation String
+  testimonial String
+  Image       String
+  Featured    Boolean  @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt  
 }
