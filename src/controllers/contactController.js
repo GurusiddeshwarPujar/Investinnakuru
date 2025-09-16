@@ -56,7 +56,7 @@ async function sendContactNotificationEmail(contactData) {
             phoneNumber: contactData.ContactPhoneNumber || 'N/A',
             subject: contactData.ContactSubject,
             message: contactData.ContactMessage,
-            headerText: 'Invest In Nakuru',
+            // headerText: 'Invest In Nakuru',
             frontend_url: process.env.frontend_url,
             currentYear: currentYear
         });

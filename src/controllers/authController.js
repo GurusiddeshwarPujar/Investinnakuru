@@ -103,7 +103,7 @@ async function sendGmailPasswordResetEmail(email, resetLink) {
         const htmlContent = loadTemplate('passwordReset', { 
             resetLink: resetLink,
             subject: 'Password Reset Request', 
-            headerText: 'Invest In Nakuru' ,
+            // headerText: 'Invest In Nakuru' ,
             frontend_url: process.env.frontend_url,
              currentYear: currentYear
         });
