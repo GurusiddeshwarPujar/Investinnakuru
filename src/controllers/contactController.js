@@ -17,7 +17,6 @@ function loadTemplate(templateName, replacements = {}) {
 
     let fullHtml = header + body + footer;
 
-    // A simple regex to handle optional fields like phoneNumber
     let processedHtml = fullHtml;
     processedHtml = processedHtml.replace(/{{#if (\w+)}}([\s\S]*?){{\/if}}/g, (match, key, content) => {
         return replacements[key] ? content : '';
@@ -58,7 +57,7 @@ async function sendContactNotificationEmail(contactData) {
             subject: contactData.ContactSubject,
             message: contactData.ContactMessage,
             headerText: 'Invest In Nakuru',
-            frontend_url: process.env.FRONTEND_URL,
+            frontend_url: process.env.frontend_url,
             currentYear: currentYear
         });
 
@@ -78,7 +77,6 @@ async function sendContactNotificationEmail(contactData) {
     }
 }
 
-//create
 const createContact = async (req,res)=>{
     const{ContactName,ContactEmail,ContactPhoneNumber,ContactSubject,ContactMessage} = req.body;
     try{
@@ -102,7 +100,6 @@ const createContact = async (req,res)=>{
 
 };
 
-//getallrecords
 const getContacts = async (req,res)=>{
     try{
         const contacts = await prisma.tbl_contact.findMany({
@@ -118,7 +115,6 @@ const getContacts = async (req,res)=>{
     }
 };
 
-//get by id
 const getContactById = async (req,res)=>{
     const {id}=req.params;
     try{
