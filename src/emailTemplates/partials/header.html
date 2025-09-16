@@ -18,12 +18,12 @@
             overflow: hidden;
         }
         .header {
-            background: linear-gradient(to right, #EB3A2A, #F29D3F);
-            color: #FFFFFF;
+            background: #ffffff; /* White background */
+            color: #000000; /* Black text */
             padding: 20px;
             display: flex;
             align-items: center;
-            justify-content: center; /* centers logo and text */
+            justify-content: center; /* centers logo + text */
             gap: 15px; /* space between logo and text */
         }
         .header img {
@@ -34,6 +34,7 @@
         .header-text {
             font-size: 20px;
             font-weight: bold;
+            color: #000000; /* Black text */
         }
         .content {
             padding: 0px 30px;
@@ -68,10 +69,8 @@
 </head>
 <body>
     <div class="container">
-       
         <div class="header">
             <img src="{{frontend_url}}/images/logo/logo.png" alt="Logo">
             <span class="header-text">{{headerText}}</span>
         </div>
         <div class="content">
-
