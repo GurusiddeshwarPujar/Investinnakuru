@@ -104,6 +104,7 @@ async function sendGmailPasswordResetEmail(email, resetLink) {
             resetLink: resetLink,
             subject: 'Password Reset Request', 
             headerText: 'Invest In Nakuru' ,
+            frontend_url: process.env.FRONTEND_URL,
              currentYear: currentYear
         });
 
