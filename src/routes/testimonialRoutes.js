@@ -11,6 +11,8 @@ router.put('/:id',auth,updateTestimonal);
 
 router.get('/',auth,getalltestimonal);
 
+router.get('/list',getalltestimonal);
+
 router.get('/:id',auth, gettestimonalbyId);
 
 router.put('/toggle-featured/:id', auth, toggleFeatured);
