@@ -87,7 +87,7 @@ const createCategory=async (req,res)=>{
 const getallCategory =async (req,res)=>{
     try{
         const categories= await prisma.tbl_category.findMany({
-            orderBy:{createdAt:'desc'},
+            orderBy:{createdAt:'asc'},
         });
         res.json(categories);
     }catch(err){

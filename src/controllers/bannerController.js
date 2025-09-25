@@ -80,7 +80,7 @@ const createBanner = async (req, res) => {
 const getAllBanners = async (req, res) => {
   try {
     const banners = await prisma.tbl_banner.findMany({
-      orderBy: { createdAt: 'desc' },
+       orderBy: { createdAt: 'asc' },
     });
     res.json(banners);
   } catch (err) {

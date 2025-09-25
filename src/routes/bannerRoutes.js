@@ -11,6 +11,7 @@ const {
 
 router.post('/', auth, createBanner);
 router.get('/', auth, getAllBanners);
+router.get('/listbanner', getAllBanners);
 router.get('/:id', auth, getBannerById);
 router.put('/:id', auth, updateBanner);
 router.delete('/:id', auth, deleteBannerById);

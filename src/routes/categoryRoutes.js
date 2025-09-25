@@ -7,6 +7,7 @@ const {createCategory,getallCategory,updateCategory,deleteCategory}=require('../
 
 router.post('/',auth,createCategory);
 router.get('/',auth,getallCategory);
+router.get('/listkeysector',getallCategory);
 router.put('/:id', auth, updateCategory);
 router.delete('/:id',auth,deleteCategory);
 
