@@ -119,6 +119,24 @@ const getNewsbyId = async (req, res) => {
     }
 };
 
+const getNewsbySlug = async (req, res) => {
+    const { slug } = req.params;
+    try {
+        const news = await prisma.tbl_news.findUnique({
+            where: { NewsURL: slug }, 
+            include: { category: true },
+        });
+
+        if (!news) {
+            return res.status(404).json({ msg: 'News article not found.' });
+        }
+        res.json(news);
+    } catch (err) {
+        console.error('Get news by slug error:', err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
 const updateNews = async (req, res) => {
     // Use the upload middleware
     uploadMiddleware(req, res, async (err) => {
@@ -133,12 +151,23 @@ const updateNews = async (req, res) => {
         try {
             const existingNews = await prisma.tbl_news.findUnique({
                 where: { NewsId: id },
-                select: { Image: true },
+                select: { Image: true,NewsURL: true },
             });
 
             if (!existingNews) {
                 if (req.file) await fs.unlink(req.file.path);
                 return res.status(404).json({ msg: 'News article not found for updating.' });
+            }
+
+            if (NewsURL && NewsURL !== existingNews.NewsURL) {
+                const urlExists = await prisma.tbl_news.findUnique({
+                    where: { NewsURL: NewsURL },
+                });
+                if (urlExists) {
+                    // If an image was uploaded, delete it before sending the error response
+                    if (req.file) await fs.unlink(req.file.path);
+                    return res.status(409).json({ msg: 'A news article with that URL already exists.' });
+                }
             }
 
             const imageToStore = newImagePath || existingNews.Image;
@@ -159,9 +188,13 @@ const updateNews = async (req, res) => {
             if (err.code === 'P2025') {
                 return res.status(404).json({ msg: 'News article not found for updating.' });
             }
+            if (err.code === 'P2002' && err.meta?.target.includes('NewsURL')) { // This handles the case where the check above might be bypassed
+                return res.status(409).json({ msg: 'A news article with that URL already exists.' });
+            }
             if (err.code === 'P2002' && err.meta?.target.includes('NewsTitle')) {
                 return res.status(409).json({ msg: 'A news article with that news title already exists.' });
             }
+            
             console.error('Update news error:', err.message);
             res.status(500).send('Server Error during news update');
         }
@@ -196,4 +229,4 @@ const deleteNewsById = async (req, res) => {
     }
 };
 
-module.exports = { createNews, getallnews, getNewsbyId, updateNews, deleteNewsById };
+module.exports = { createNews, getallnews, getNewsbyId, updateNews, deleteNewsById,getNewsbySlug };

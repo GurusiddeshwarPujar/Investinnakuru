@@ -56,7 +56,7 @@ model tbl_news{
 NewsId String @id @default(uuid())
 CatId String
 NewsTitle String @unique
-NewsURL String
+NewsURL String   @unique
 NewsShortDescription String
 NewsDescription String
 Image String

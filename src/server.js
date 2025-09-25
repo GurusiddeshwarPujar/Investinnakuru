@@ -51,9 +51,8 @@ const contactRoutes = require('./routes/contactRoutes');
 const cmsRoutes = require('./routes/cmsRoutes');
 
 const catRoutes = require('./routes/categoryRoutes');
-const newsRoutes=require('./routes/newsRoutes');
 
-const frontendnewsRoutes = require('./routes/frontendnewsRoutes');
+const newsRoutes=require('./routes/newsRoutes');
 
 const newslettersubscriber = require('./routes/newsletterRoutes');
 
@@ -72,8 +71,6 @@ app.use('/api/cms',cmsRoutes);
 app.use('/api/cat',catRoutes);
 
 app.use('/api/admin/news',newsRoutes);
-
-app.use('/api/news',frontendnewsRoutes);
 
 app.use('/api/newslettersubscriber',newslettersubscriber);
 
