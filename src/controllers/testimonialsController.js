@@ -192,33 +192,84 @@ const deleteTestimonalById = async (req, res) => {
 };
 
 
+// const toggleFeatured = async (req, res) => {
+//     const { id } = req.params;
+
+//     try {
+//         const existingtestimonials = await prisma.tbl_testimonial.findUnique({
+//             where: { TID: id },
+//             select: { Featured: true },
+//         });
+
+//         if (!existingtestimonials) {
+//             return res.status(404).json({ msg: 'Testimonials not found for toggling.' });
+//         }
+        
+//         const updatedTestimonals = await prisma.tbl_testimonial.update({
+//             where: { TID: id },
+//             data: {
+//                 Featured: !existingtestimonials.Featured,
+//             },
+//         });
+
+//         res.json({ msg: 'Testimonial featured status toggled successfully.', testimonials : updatedTestimonals });
+//     } catch (err) {
+//         console.error('Toggle featured status error:', err.message);
+//         res.status(500).send('Server Error during testimonal deletion');
+//     }
+// };
+
+
 const toggleFeatured = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const existingtestimonials = await prisma.tbl_testimonial.findUnique({
+       
+        const testimonialToToggle = await prisma.tbl_testimonial.findUnique({
             where: { TID: id },
             select: { Featured: true },
         });
 
-        if (!existingtestimonials) {
-            return res.status(404).json({ msg: 'Testimonials not found for toggling.' });
+        if (!testimonialToToggle) {
+            return res.status(404).json({ msg: 'Success stories not found for toggling.' });
+        }
+
+        const isCurrentlyFeatured = testimonialToToggle.Featured;
+        const isTryingToFeature = !isCurrentlyFeatured; 
+
+       
+        if (isTryingToFeature) {
+            
+            const featuredCount = await prisma.tbl_testimonial.count({
+                where: { Featured: true },
+            });
+
+           
+            if (featuredCount >= 5) {
+                return res.status(400).json({ 
+                    msg: 'You can only feature a maximum of 5 success stories. Please un-feature another one first.' 
+                });
+            }
         }
         
-        const updatedTestimonals = await prisma.tbl_testimonial.update({
+       
+        const updatedTestimonial = await prisma.tbl_testimonial.update({
             where: { TID: id },
             data: {
-                Featured: !existingtestimonials.Featured,
+                Featured: isTryingToFeature, 
             },
         });
 
-        res.json({ msg: 'Testimonial featured status toggled successfully.', testimonials : updatedTestimonals });
+        res.json({ 
+            msg: 'Success stories featured status toggled successfully.', 
+            testimonial: updatedTestimonial
+        });
+
     } catch (err) {
         console.error('Toggle featured status error:', err.message);
-        res.status(500).send('Server Error during testimonal deletion');
+        res.status(500).send('Server Error during Success stories feature toggle');
     }
 };
-
 
 
 module.exports = {createTestimonial,getalltestimonal,gettestimonalbyId,updateTestimonal,deleteTestimonalById,toggleFeatured};
