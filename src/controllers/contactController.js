@@ -90,9 +90,11 @@ const createContact = async (req,res)=>{
             },
         });
 
-        await sendContactNotificationEmail(newContact);
+        // await sendContactNotificationEmail(newContact);
         res.status(201).json({ msg : 'Message sent successfully!' , contact: newContact});
-    
+        sendContactNotificationEmail(newContact)
+            .then(() => console.log('Contact notification email sent successfully in background.'))
+            .catch((err) => console.error('Error sending background email:', err.message));
     }catch(err){
         console.error('Create contact error:', err.message);
         //res.status(500).send('Server Error');
