@@ -37,7 +37,7 @@ function loadTemplate(templateName, replacements = {}) {
 // Controller function to handle admin user login
 const loginUser = async (req, res) => {
   // Extract email and password from the request body
-  const { email, password } = req.body;
+  const { email, password ,expiresInDays } = req.body;
 
   try {
     // 1. Check if an admin with the provided email exists
@@ -65,13 +65,17 @@ const loginUser = async (req, res) => {
       },
     };
 
+    const validDays = [1, 7].includes(expiresInDays) ? expiresInDays : 1;
+    const jwtExpiration = `${validDays}d`;
+
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
-      { expiresIn: '1h' },
+      //{ expiresIn: '1h' },
+      { expiresIn: jwtExpiration },
       (err, token) => {
         if (err) throw err;
-        res.json({ token }); // Send the token back
+        res.json({ token });
       }
     );
   } catch (err) {
