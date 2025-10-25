@@ -43,11 +43,9 @@ async function sendContactNotificationEmail(contactData) {
     try{
         const transporter =nodemailer.createTransport({
             host: 'smtp.gmail.com',
-            // port: 587,
-            // secure: false,
-            // requireTLS: true,
-            port: 465, 
-            secure: true,
+            port: 587,
+            secure: false,
+            requireTLS: true,
             auth: { user, pass },
         });
 
