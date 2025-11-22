@@ -1,8 +1,6 @@
-// src/controllers/authController.js
-// src/controllers/authController.js
 const fs = require('fs');
 const path = require('path');
-const { PrismaClient } = require('../../generated/prisma'); // Adjust path based on your 'src' location
+const { PrismaClient } = require('../../generated/prisma'); 
 const prisma = new PrismaClient();
 const bcrypt = require('bcryptjs'); // Used for hashing passwords
 const jwt = require('jsonwebtoken'); // Used for creating and verifying JWTs
