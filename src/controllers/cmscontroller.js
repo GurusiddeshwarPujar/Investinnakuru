@@ -34,7 +34,11 @@ const updateCms = async (req,res)=>{
 
 const getCms= async(req,res)=>{
     try{
-        const cmsEntries = await prisma.tbl_cms.findMany();
+        const cmsEntries = await prisma.tbl_cms.findMany({
+            orderBy: {
+                CmsPageName: 'asc',
+            }
+        });
         res.json(cmsEntries);
     }catch(err){
         console.error('Get Cms error :',err.message);

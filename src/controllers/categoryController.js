@@ -4,7 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs/promises');
 
-
+const UPLOAD_BASE_DIR = path.join(__dirname, '..', '..', 'public', 'images', 'keysector');
 const storage = multer.diskStorage({
     destination: async (req, file, cb) => {
         const uploadPath = path.join(__dirname, '..', '..', 'public', 'images', 'keysector');
@@ -37,14 +37,21 @@ const upload = multer({
 
 const uploadMiddleware = upload.single('Image');
 
-const deleteImage = async (imagePath) => {
+const deleteImage = async (filename) => {
     try {
-        if (imagePath && imagePath.startsWith('/images/keysector/')) {
-            const fullPath = path.join(__dirname, '..', '..', 'public', imagePath);
-            await fs.unlink(fullPath);
+        if (!filename) {
+            return; 
         }
+        
+        const fullPath = path.join(UPLOAD_BASE_DIR, filename);
+        await fs.access(fullPath);
+        await fs.unlink(fullPath);
+        console.log(`Successfully deleted image file: ${filename}`);
+
     } catch (err) {
-        console.error('Error deleting image file:', err.message);
+        if (err.code !== 'ENOENT') {
+            console.error('Error deleting image file:', err.message);
+        }
     }
 };
 
