@@ -3,7 +3,7 @@ const router = express.Router();
 
 const auth = require('../middleware/authMiddleware');
 
-const {createTestimonial,getalltestimonal,gettestimonalbyId,updateTestimonal,deleteTestimonalById,toggleFeatured} =require('../controllers/testimonialsController');
+const {createTestimonial,getalltestimonal,gettestimonalbyId,updateTestimonal,getFeaturedhomeTestimonal,deleteTestimonalById,toggleFeatured} =require('../controllers/testimonialsController');
 
 router.post('/',auth,createTestimonial);
 
@@ -14,6 +14,7 @@ router.get('/',auth,getalltestimonal);
 router.get('/list',getalltestimonal);
 
 router.get('/:id',auth, gettestimonalbyId);
+router.get('/home/featured-successstories', getFeaturedhomeTestimonal);
 
 router.put('/toggle-featured/:id', auth, toggleFeatured);
 

@@ -37,6 +37,9 @@ model tbl_cms {
   CmsId      String @id @default(uuid())
   CmsPageName String @unique
   CmsText    String
+  CmsSlug      String     @unique
+  CreatedAt    DateTime   @default(now())
+  UpdatedAt    DateTime   @updatedAt
 }
 
 
@@ -60,6 +63,7 @@ NewsURL String   @unique
 NewsShortDescription String
 NewsDescription String
 Image String
+IsFeatured  Boolean  @default(false)
 createdAt DateTime @default(now())
 updatedAt DateTime  @updatedAt
 

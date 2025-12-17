@@ -107,11 +107,34 @@ const createTestimonial = async (req,res)=>{
 };
 
 
+// const getalltestimonal = async(req,res)=>{
+//     try{
+//         const _testimonal =await prisma.tbl_testimonial.findMany({
+//             orderBy : {createdAt : 'desc'},
+            
+//         });
+
+//         res.json(_testimonal);
+
+//     }catch(err){
+//         console.error('Get testimonal error:', err.message);
+//         res.status(500).json({msg :'Server Error'});
+//     }
+// };
+
+
 const getalltestimonal = async(req,res)=>{
     try{
-        const _testimonal =await prisma.tbl_testimonial.findMany({
+        const featuredtestimonal =await prisma.tbl_testimonial.findMany({
+             where: { Featured: true },
             orderBy : {createdAt : 'desc'},
         });
+        const nonfeaturedtestimonal =await prisma.tbl_testimonial.findMany({
+             where: { Featured: false },
+            orderBy : {createdAt : 'desc'},
+        });
+
+        const _testimonal = [...featuredtestimonal, ...nonfeaturedtestimonal];
 
         res.json(_testimonal);
 
@@ -120,6 +143,7 @@ const getalltestimonal = async(req,res)=>{
         res.status(500).json({msg :'Server Error'});
     }
 };
+
 
 
 const gettestimonalbyId =async(req,res)=>{
@@ -136,6 +160,34 @@ const gettestimonalbyId =async(req,res)=>{
     }catch(err){
             console.error('Get testimonal by ID error:', err.message);
             res.status(500).json({msg :'Server Error'});
+    }
+};
+
+
+const getFeaturedhomeTestimonal = async (req, res) => {
+    try {
+        const featuredTestimonal = await prisma.tbl_testimonial.findMany({
+            where: {
+                Featured: true,
+            },
+            select: {
+                TID: true,
+                TFullName: true,
+                designation: true,
+                testimonial:true,
+                createdAt: true,
+                Image: true,
+            },
+            orderBy: {
+                createdAt: 'desc', 
+            },
+            take: 5,
+        });
+
+        res.json(featuredTestimonal);
+    } catch (err) {
+        console.error('Error fetching featured success stories:', err.message);
+        res.status(500).send('Server Error');
     }
 };
 
@@ -292,4 +344,4 @@ const toggleFeatured = async (req, res) => {
 };
 
 
-module.exports = {createTestimonial,getalltestimonal,gettestimonalbyId,updateTestimonal,deleteTestimonalById,toggleFeatured};
+module.exports = {createTestimonial,getalltestimonal,gettestimonalbyId,updateTestimonal,deleteTestimonalById,getFeaturedhomeTestimonal,toggleFeatured};

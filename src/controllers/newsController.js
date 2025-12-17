@@ -96,13 +96,36 @@ const createNews = async (req, res) => {
     });
 };
 
+// const getallnews = async (req, res) => {
+//     try {
+//         const news = await prisma.tbl_news.findMany({
+//             orderBy: { createdAt: 'desc' },
+//             include: { category: true },
+//         });
+//         res.json(news);
+//     } catch (err) {
+//         console.error('Get news error:', err.message);
+//         res.status(500).send('Server Error');
+//     }
+// };
+
 const getallnews = async (req, res) => {
     try {
-        const news = await prisma.tbl_news.findMany({
+        const featurednews = await prisma.tbl_news.findMany({
+             where: { IsFeatured: true },
             orderBy: { createdAt: 'desc' },
             include: { category: true },
         });
-        res.json(news);
+
+         const nonFeaturednews = await prisma.tbl_news.findMany({
+            where: { IsFeatured: false },
+            orderBy: { createdAt: 'desc' },
+            include: { category: true },
+        });
+
+         const allNews = [...featurednews, ...nonFeaturednews];
+
+        res.json(allNews);
     } catch (err) {
         console.error('Get news error:', err.message);
         res.status(500).send('Server Error');
@@ -141,6 +164,71 @@ const getNewsbySlug = async (req, res) => {
         res.json(news);
     } catch (err) {
         console.error('Get news by slug error:', err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+const toggleFeaturedNews = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const news = await prisma.tbl_news.findUnique({
+            where: { NewsId: id },
+        });
+
+        if (!news) {
+            return res.status(404).json({ msg: 'News not found.' });
+        }
+
+        const newStatus = !news.IsFeatured;
+        if (newStatus === true) {
+            const count = await prisma.tbl_news.count({
+                where: { IsFeatured: true },
+            });
+
+            if (count >= 3) {
+                return res.status(400).json({ 
+                    msg: 'Limit reached: Maximum 3 news and events can be featured. Please uncheck another news and events first.' 
+                });
+            }
+        }
+
+        const updatedNews = await prisma.tbl_news.update({
+            where: { NewsId: id },
+            data: { IsFeatured: newStatus },
+        });
+
+        res.json({ msg: 'Status updated successfully.', news: updatedNews });
+
+    } catch (err) {
+        console.error('Toggle featured error:', err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+
+const getFeaturedhomenews = async (req, res) => {
+    try {
+        const featuredNews = await prisma.tbl_news.findMany({
+            where: {
+                IsFeatured: true,
+            },
+            select: {
+                NewsId: true,
+                NewsTitle: true,
+                NewsURL: true,
+                createdAt: true,
+                Image: true,
+            },
+            orderBy: {
+                createdAt: 'desc', 
+            },
+            take: 3,
+        });
+
+        res.json(featuredNews);
+    } catch (err) {
+        console.error('Error fetching featured news and events:', err.message);
         res.status(500).send('Server Error');
     }
 };
@@ -237,4 +325,4 @@ const deleteNewsById = async (req, res) => {
     }
 };
 
-module.exports = { createNews, getallnews, getNewsbyId, updateNews, deleteNewsById,getNewsbySlug };
+module.exports = { createNews, getallnews, getNewsbyId, toggleFeaturedNews, updateNews, getFeaturedhomenews,deleteNewsById,getNewsbySlug };
